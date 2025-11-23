@@ -1,0 +1,868 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>LMS — Modern UI Demo</title>
+  <meta name="description" content="Learning Management System" />
+  <style>
+    /* -----------------------------------------
+       VARIABLES & BASE
+    ------------------------------------------*/
+    :root{
+      --bg:#f4f7fb;
+      --card:#ffffff;
+      --muted:#6b7280;
+      --accent:#2563eb;
+      --accent-2:#7c3aed;
+      --glass: rgba(255,255,255,0.6);
+      --success:#10b981;
+      --danger:#ef4444;
+      --radius:12px;
+      --shadow: 0 6px 18px rgba(16,24,40,0.06);
+      --glass-shadow: 0 8px 30px rgba(16,24,40,0.06);
+      --max-width:1100px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: linear-gradient(180deg,#f7fafc 0%, var(--bg) 100%);
+      color:#0f172a;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      line-height:1.45;
+    }
+    a{color:inherit;text-decoration:none}
+    button{font:inherit}
+
+    /* -----------------------------------------
+       LAYOUT
+    ------------------------------------------*/
+    .wrap{
+      max-width:var(--max-width);
+      margin:24px auto;
+      padding:18px;
+    }
+    header.appbar{
+      display:flex;
+      align-items:center;
+      gap:16px;
+      background:linear-gradient(90deg, rgba(37,99,235,0.06), rgba(124,58,237,0.04));
+      padding:14px 18px;
+      border-radius:14px;
+      box-shadow:var(--shadow);
+      position:sticky;
+      top:16px;
+      z-index:50;
+      backdrop-filter: blur(6px);
+    }
+    .brand{
+      display:flex;gap:12px;align-items:center;
+    }
+    .brand .logo{
+      display:grid;place-items:center;width:48px;height:48px;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:white;font-weight:700;border-radius:10px;box-shadow:var(--glass-shadow);
+    }
+    .brand h1{font-size:18px;margin:0}
+    .brand p{font-size:12px;margin:0;color:var(--muted)}
+
+    .searchbar{
+      flex:1;display:flex;align-items:center;gap:10px;padding:8px;background:var(--card);border-radius:12px;box-shadow:var(--shadow);
+    }
+    .searchbar input{flex:1;border:0;outline:none;padding:6px 8px;background:transparent}
+    .nav-actions{display:flex;gap:10px;align-items:center}
+    .btn {
+      padding:8px 12px;border-radius:10px;border:none;background:var(--accent);color:white;cursor:pointer;
+      box-shadow: 0 6px 18px rgba(37,99,235,0.12); transition:transform .14s ease, box-shadow .14s ease;
+    }
+    .btn.secondary { background:transparent;color:var(--accent);border:1px solid rgba(37,99,235,0.12); box-shadow:none;}
+    .btn:active{transform:translateY(1px)}
+    .avatar{
+      width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#60a5fa,#a78bfa);display:grid;place-items:center;color:white;font-weight:600;
+      cursor:pointer;
+    }
+
+    /* -----------------------------------------
+       GRID CONTENT
+    ------------------------------------------*/
+    .main-grid{
+      display:grid;
+      grid-template-columns: 1fr 320px;
+      gap:20px;
+      margin-top:20px;
+    }
+    @media (max-width:980px){
+      .main-grid{grid-template-columns:1fr}
+      .nav-actions .hide-md{display:none}
+    }
+
+    /* -----------------------------------------
+       PANELS & CARDS
+    ------------------------------------------*/
+    .card{
+      background:var(--card);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:16px;
+    }
+    .section-title{
+      display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;
+    }
+    .muted{color:var(--muted);font-size:13px}
+
+    /* -----------------------------------------
+       HERO
+    ------------------------------------------*/
+    .hero{
+      display:flex;gap:18px;align-items:center;padding:22px;border-radius:14px;background:linear-gradient(90deg,#eef2ff 0%, #fff 100%);box-shadow:var(--glass-shadow);
+    }
+    .hero h2{margin:0;font-size:22px}
+    .hero p{margin:6px 0;color:var(--muted)}
+
+    /* -----------------------------------------
+       COURSES GRID
+    ------------------------------------------*/
+    .courses-grid{
+      display:grid;
+      grid-template-columns:repeat(2, 1fr);
+      gap:14px;
+    }
+    @media (max-width:780px){
+      .courses-grid{grid-template-columns:1fr}
+    }
+    .course-card{
+      display:flex;flex-direction:column;padding:14px;border-radius:12px;background:linear-gradient(180deg,#fff,#f8fafc);
+      border:1px solid rgba(18,24,34,0.04);
+    }
+    .course-card .meta{display:flex;gap:10px;align-items:center;justify-content:space-between}
+    .course-card .title{font-weight:600;margin-top:8px}
+    .course-card .desc{color:var(--muted);font-size:13px;margin-top:8px}
+    .course-card .actions{display:flex;gap:8px;margin-top:12px}
+
+    /* -----------------------------------------
+       SIDE PANEL
+    ------------------------------------------*/
+    aside .mini-card{display:flex;flex-direction:column;gap:8px}
+    .progress-bar{height:10px;background:#eef2ff;border-radius:999px;overflow:hidden}
+    .progress-inner{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-2));width:40%}
+
+    /* -----------------------------------------
+       FORMS & INPUTS
+    ------------------------------------------*/
+    label{display:block;font-size:13px;margin-top:10px;color:var(--muted)}
+    input[type="text"], input[type="email"], input[type="password"], textarea, select {
+      width:100%;padding:10px;border-radius:10px;border:1px solid rgba(15,23,42,0.06);outline:none;background:linear-gradient(180deg,#fff,#fcfdff);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.5);
+    }
+    textarea{min-height:110px;resize:vertical}
+    .form-row{display:flex;gap:8px}
+    .chip{display:inline-block;padding:6px 10px;border-radius:999px;background:#f8fafc;border:1px solid rgba(15,23,42,0.04);font-size:13px}
+
+    /* -----------------------------------------
+       COURSE DETAIL / LESSONS
+    ------------------------------------------*/
+    .lessons{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+    .lesson{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:10px;background:#fbfdff;border:1px solid rgba(2,6,23,0.03)}
+
+    /* -----------------------------------------
+       QUIZ UI
+    ------------------------------------------*/
+    .quiz-question{padding:12px;border-radius:10px;border:1px solid rgba(2,6,23,0.04);margin-bottom:10px}
+    .options{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+    .option{padding:10px;border-radius:10px;border:1px solid rgba(2,6,23,0.03);cursor:pointer;background:#fff}
+    .option.selected{border-color:var(--accent);box-shadow:0 6px 18px rgba(37,99,235,0.08);background:linear-gradient(90deg,#f0f8ff,#fff)}
+
+    /* -----------------------------------------
+       ADMIN
+    ------------------------------------------*/
+    .table{width:100%;border-collapse:collapse}
+    .table tr td{padding:8px;border-bottom:1px dashed rgba(2,6,23,0.04)}
+    .badge {display:inline-block;padding:6px 8px;border-radius:8px;font-size:12px;background:rgba(34,197,94,0.12);color:var(--success)}
+
+    /* -----------------------------------------
+       FOOTER
+    ------------------------------------------*/
+    footer{margin-top:20px;text-align:center;color:var(--muted);font-size:13px;padding:10px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <!-- APP BAR -->
+    <header class="appbar card">
+      <div class="brand">
+        <div class="logo">L</div>
+        <div>
+          <h1>LMS</h1>
+          <p>Learn • Build • Certify</p>
+        </div>
+      </div>
+
+      <div class="searchbar" role="search">
+        <input id="searchInput" placeholder="Search courses, instructors, topics..." aria-label="Search courses" />
+        <button class="btn secondary hide-md" onclick="ui.search()">Search</button>
+      </div>
+
+      <div class="nav-actions">
+    <div class="hide-md muted">Theme: Modern</div>
+    <button class="btn secondary hide-md" onclick="ui.show('home')">Home</button>
+    <button class="btn" onclick="ui.show('courses')">Browse</button>
+
+    <!-- 🟦 MANUAL ADMIN BUTTON (always visible) -->
+    <button class="btn secondary" onclick="ui.show('admin')">Admin</button>
+
+    <div id="userActions"></div>
+</div>
+
+    </header>
+
+    <!-- MAIN AREA -->
+    <div class="main-grid">
+      <main>
+        <!-- HOME -->
+        <div id="homeView" class="card view active">
+          <div class="hero">
+            <div>
+              <h2>Learn new skills from industry experts</h2>
+              <p class="muted">Short courses, professional certificates, and guided projects — all in one platform.</p>
+              <div style="margin-top:12px;display:flex;gap:10px">
+                <button class="btn" onclick="ui.show('courses')">Browse Courses</button>
+                <button class="btn secondary" onclick="ui.show('register')">Get Started</button>
+              </div>
+            </div>
+            <div style="width:220px">
+              <div class="card" style="padding:12px">
+                <div class="muted">Your progress</div>
+                <div style="margin-top:10px"><div class="progress-bar"><div class="progress-inner" id="globalProgress" style="width:0%"></div></div></div>
+                <div style="margin-top:8px;font-size:13px" id="globalProgressText">No active courses</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top:18px">
+            <div class="section-title">
+              <h3 style="margin:0">Popular courses</h3>
+              <div class="muted">Top picks for you</div>
+            </div>
+            <div class="courses-grid" id="popularGrid"></div>
+          </div>
+        </div>
+
+        <!-- COURSES -->
+        <div id="coursesView" class="card view" style="display:none">
+          <div class="section-title">
+            <h3 style="margin:0">All Courses</h3>
+            <div>
+              <select id="filterRole" onchange="ui.applyFilters()">
+                <option value="">All topics</option>
+                <option value="data">Data Science</option>
+                <option value="web">Web Dev</option>
+                <option value="ml">Machine Learning</option>
+              </select>
+              <button class="btn secondary" onclick="ui.show('createCourse')">Create Course</button>
+            </div>
+          </div>
+          <div id="coursesGrid" class="courses-grid"></div>
+        </div>
+
+        <!-- COURSE DETAIL -->
+        <div id="courseDetailView" class="card view" style="display:none">
+          <div id="courseDetailContent"></div>
+        </div>
+
+        <!-- CREATE COURSE -->
+        <div id="createCourseView" class="card view" style="display:none">
+          <div class="section-title"><h3 style="margin:0">Create a Course</h3><div class="muted">Instructors only</div></div>
+          <div>
+            <label>Title</label>
+            <input id="newTitle" placeholder="Course title" />
+            <label>Category</label>
+            <select id="newCategory">
+              <option value="web">Web Dev</option>
+              <option value="data">Data Science</option>
+              <option value="ml">Machine Learning</option>
+            </select>
+            <label>Description</label>
+            <textarea id="newDescription" placeholder="Short description"></textarea>
+            <label>Lessons (JSON array of titles)</label>
+            <textarea id="newLessons" placeholder='e.g. ["Intro","Setup","Lesson 1"]'></textarea>
+            <label>Quizzes (JSON format)</label>
+            <textarea id="newQuizzes" placeholder='e.g. [{"id":"q1","title":"Quiz 1","questions":[{"q":"...","options":["a","b"],"answerIndex":0}]}]'></textarea>
+            <div style="margin-top:12px;display:flex;gap:8px">
+              <button class="btn" onclick="ui.createCourse()">Create</button>
+              <button class="btn secondary" onclick="ui.show('courses')">Cancel</button>
+            </div>
+            <div id="createMsg" class="muted" style="margin-top:8px"></div>
+          </div>
+        </div>
+
+        <!-- DASHBOARD -->
+        <div id="dashboardView" class="card view" style="display:none">
+          <div class="section-title"><h3 style="margin:0">My Dashboard</h3><div class="muted">Your enrolled courses & progress</div></div>
+          <div id="myCoursesList"></div>
+        </div>
+
+        <!-- QUIZ VIEW -->
+        <div id="quizView" class="card view" style="display:none">
+          <div id="quizContent"></div>
+        </div>
+
+        <!-- CERTIFICATE VIEW -->
+        <div id="certificateView" class="card view" style="display:none">
+          <div id="certificateContent"></div>
+        </div>
+
+        <!-- REGISTER / LOGIN / PROFILE combined view -->
+        <div id="authView" class="card view" style="display:none">
+          <div id="authContent"></div>
+        </div>
+
+        <!-- ADMIN -->
+        <div id="adminView" class="card view" style="display:none">
+          <div class="section-title"><h3 style="margin:0">Admin Panel</h3><div class="muted">Approve instructors & run reports</div></div>
+          <div id="adminContent"></div>
+        </div>
+
+      </main>
+
+      <!-- SIDE PANEL -->
+      <aside>
+        <div class="card">
+          <div class="muted">Account</div>
+          <div style="display:flex;gap:12px;align-items:center;margin-top:10px">
+            <div id="sideAvatar" class="avatar">A</div>
+            <div>
+              <div id="sideName" style="font-weight:600">Guest</div>
+              <div class="muted" id="sideRole">Not signed in</div>
+            </div>
+          </div>
+
+          <div style="margin-top:14px" class="mini-card">
+            <div><div class="muted">Quick stats</div></div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+              <div class="chip" id="statCourses">0 courses</div>
+              <div class="chip" id="statEnrolled">0 enrolled</div>
+            </div>
+          </div>
+
+          <div style="margin-top:14px">
+            <div class="muted">Actions</div>
+            <div style="display:flex;gap:8px;margin-top:10px">
+              <button class="btn" onclick="ui.show('dashboard')">My Dashboard</button>
+              <button class="btn secondary" onclick="ui.logout()" id="logoutBtn" style="display:none">Logout</button>
+            </div>
+          </div>
+        </div>
+
+        <div style="height:12px"></div>
+
+        <div class="card">
+          <div class="muted">Admin Quick</div>
+          <div id="adminQuick" style="margin-top:10px" class="muted">—</div>
+        </div>
+
+      </aside>
+    </div>
+
+    <footer class="muted">LMS Demo • UI/UX Mock — Data stored in browser (localStorage). Replace with API for production.</footer>
+  </div>
+
+  <!-- JS: UI and mock data -->
+  <script>
+    /* -----------------------------------------
+       MOCK STORAGE & UTILITIES
+    ------------------------------------------*/
+    const storage = {
+      get(key, fallback){ try{ const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback } catch(e){ return fallback } },
+      set(key, val){ localStorage.setItem(key, JSON.stringify(val)) },
+    };
+
+    // seed sample data if empty
+    const seedData = () => {
+      if(!storage.get('lms_users')) {
+        const users = [
+          { id:'u_admin', name:'Admin', email:'admin@lms.test', role:'admin', password:'admin123', enrolled:[] , approved:true },
+          { id:'u_inst', name:'Neha Rao', email:'neha@lms.test', role:'instructor', password:'inst123', enrolled:[], approved:true },
+          { id:'u_std', name:'Ravi', email:'ravi@lms.test', role:'student', password:'stud123', enrolled:[], approved:true }
+        ];
+        storage.set('lms_users', users);
+      }
+      if(!storage.get('lms_courses')) {
+        const sample = [
+          { id:'c1', title:'Intro to Machine Learning', description:'Supervised & unsupervised fundamentals with hands-on code.', instructor:'Dr. Smith', category:'ml', lessons:['Intro','Regression','Classification'], quizzes:[{id:'q1', title:'ML Basics', questions:[{q:'What is supervised learning?', options:['Labelled','Unlabelled'], answerIndex:0}]}], createdBy:'u_inst' },
+          { id:'c2', title:'Modern Web Development', description:'React, Node, and deployment workflows.', instructor:'Neha Rao', category:'web', lessons:['HTML & CSS','JS Basics','React Intro'], quizzes:[], createdBy:'u_inst' },
+          { id:'c3', title:'Data Analysis with Python', description:'Pandas, numpy and visualizations.', instructor:'Arjun Mehta', category:'data', lessons:['Pandas Basics','Cleaning Data'], quizzes:[], createdBy:'u_inst' },
+        ];
+        storage.set('lms_courses', sample);
+      }
+    };
+    seedData();
+
+    // helpers
+    const uid = () => 'id'+Math.random().toString(36).slice(2,9);
+    const findUserByEmail = (email) => storage.get('lms_users',[]).find(u=>u.email===email);
+    const getUsers = ()=> storage.get('lms_users',[]);
+    const setUsers = (v)=> storage.set('lms_users',v);
+    const getCourses = ()=> storage.get('lms_courses',[]);
+    const setCourses = (v)=> storage.set('lms_courses',v);
+
+    /* -----------------------------------------
+       UI LIFECYCLE & RENDER
+    ------------------------------------------*/
+    const ui = {
+      state: {
+        view:'home',
+        auth: storage.get('lms_auth') || null // { id, name, email, role }
+      },
+
+      init(){
+        // wire search input
+        document.getElementById('searchInput').addEventListener('keydown', (e)=> {
+          if(e.key==='Enter') ui.search();
+        });
+        this.renderUserActions();
+        this.renderPopular();
+        this.renderCoursesGrid();
+        this.updateSide();
+        this.show('home');
+      },
+
+      show(view, payload){
+        // hide views
+        document.querySelectorAll('.view').forEach(v=>v.style.display='none');
+        // show selected
+        const map = {
+          home:'homeView',
+          courses:'coursesView',
+          courseDetail:'courseDetailView',
+          createCourse:'createCourseView',
+          dashboard:'dashboardView',
+          quiz:'quizView',
+          certificate:'certificateView',
+          auth:'authView',
+          admin:'adminView'
+        };
+        if(view==='courseDetail' && payload) this.renderCourseDetail(payload);
+        if(view==='dashboard') this.renderDashboard();
+        if(view==='quiz' && payload) this.renderQuiz(payload.courseId,payload.quizId);
+        if(view==='certificate' && payload) this.renderCertificate(payload.courseId);
+        if(view==='auth' && payload) this.renderAuth(payload.mode);
+        if(view==='admin') this.renderAdmin();
+        document.getElementById(map[view] || map.home).style.display='block';
+        this.state.view = view;
+        window.scrollTo({top:0, behavior:'smooth'});
+      },
+
+      renderUserActions(){
+        const container = document.getElementById('userActions');
+        container.innerHTML = '';
+        if(this.state.auth){
+          const name = this.state.auth.name.split(' ')[0];
+          const avatar = document.createElement('div');
+          avatar.className = 'avatar';
+          avatar.innerText = name[0] || 'U';
+          avatar.onclick = ()=> this.show('dashboard');
+          container.appendChild(avatar);
+          const menuBtn = document.createElement('button');
+          menuBtn.className='btn secondary hide-md';
+          menuBtn.innerText='Profile';
+          menuBtn.onclick = ()=> this.showAuthProfile();
+          container.appendChild(menuBtn);
+        } else {
+          const loginBtn = document.createElement('button');
+          loginBtn.className='btn';
+          loginBtn.innerText='Login';
+          loginBtn.onclick = ()=> this.show('auth','login');
+          container.appendChild(loginBtn);
+        }
+      },
+
+      updateSide(){
+        const auth = this.state.auth;
+        const sideAvatar = document.getElementById('sideAvatar');
+        const sideName = document.getElementById('sideName');
+        const sideRole = document.getElementById('sideRole');
+        const logoutBtn = document.getElementById('logoutBtn');
+        if(auth){
+          sideAvatar.innerText = auth.name[0] || 'U';
+          sideName.innerText = auth.name;
+          sideRole.innerText = auth.email + ' • ' + auth.role;
+          logoutBtn.style.display='inline-block';
+        } else {
+          sideAvatar.innerText='G';
+          sideName.innerText='Guest';
+          sideRole.innerText='Not signed in';
+          logoutBtn.style.display='none';
+        }
+        // stats
+        const allCourses = getCourses();
+        document.getElementById('statCourses').innerText = allCourses.length+' courses';
+        const enrolledCount = auth ? (getUsers().find(u=>u.id===auth.id)?.enrolled.length || 0) : 0;
+        document.getElementById('statEnrolled').innerText = enrolledCount+' enrolled';
+        document.getElementById('globalProgress').style.width = (enrolledCount ? Math.min(100, enrolledCount*25) : 0) + '%';
+        document.getElementById('globalProgressText').innerText = enrolledCount ? `You are enrolled in ${enrolledCount} course(s)` : 'No active courses';
+      },
+
+      renderPopular(){
+        const grid = document.getElementById('popularGrid');
+        grid.innerHTML='';
+        const courses = getCourses().slice(0,4);
+        courses.forEach(c=>{
+          const el = document.createElement('div');
+          el.className='course-card';
+          el.innerHTML = `<div class="meta">
+              <div>
+                <div style="font-size:13px;color:var(--muted)">${c.category.toUpperCase()}</div>
+                <div class="title">${c.title}</div>
+                <div class="desc">${c.description}</div>
+              </div>
+              <div style="text-align:right">
+                <div class="muted" style="font-size:13px">${c.instructor}</div>
+                <div style="margin-top:10px" class="chip">Enroll</div>
+              </div>
+            </div>`;
+          el.onclick = ()=> this.show('courseDetail', c.id);
+          grid.appendChild(el);
+        });
+      },
+
+      renderCoursesGrid(){
+        const grid = document.getElementById('coursesGrid');
+        grid.innerHTML='';
+        const courses = getCourses();
+        courses.forEach(c=>{
+          const el = document.createElement('div');
+          el.className='course-card';
+          el.innerHTML = `<div>
+            <div style="font-size:13px;color:var(--muted)">${c.category.toUpperCase()}</div>
+            <div class="title">${c.title}</div>
+            <div class="desc">${c.description}</div>
+            <div style="margin-top:10px" class="muted">Instructor: ${c.instructor}</div>
+          </div>
+          <div class="actions">
+            <button class="btn secondary" onclick="ui.show('courseDetail','${c.id}');event.stopPropagation()">View</button>
+            <button class="btn" onclick="ui.enroll('${c.id}');event.stopPropagation()">Enroll</button>
+          </div>`;
+          grid.appendChild(el);
+        });
+        this.updateSide();
+      },
+
+      renderCourseDetail(courseId){
+        const c = getCourses().find(x=>x.id===courseId);
+        const container = document.getElementById('courseDetailContent');
+        if(!c) { container.innerHTML='<p>Course not found</p>'; return; }
+        let html = `<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+          <div>
+            <div class="muted">${c.category.toUpperCase()}</div>
+            <h2 style="margin:6px 0">${c.title}</h2>
+            <div class="muted">Instructor: ${c.instructor}</div>
+            <p class="muted" style="margin-top:10px">${c.description}</p>
+            <div style="margin-top:12px;display:flex;gap:8px">
+              <button class="btn" onclick="ui.enroll('${c.id}')">Enroll</button>
+              <button class="btn secondary" onclick="ui.show('certificate',{courseId:'${c.id}'})">Certificate</button>
+            </div>
+          </div>
+          <div style="max-width:280px">
+            <div class="card" style="padding:10px">
+              <div class="muted">Course progress</div>
+              <div style="margin-top:10px">
+                <div class="progress-bar"><div class="progress-inner" style="width: ${this._courseProgress(c.id)}%"></div></div>
+                <div class="muted" style="margin-top:6px">${this._courseProgress(c.id)}% complete</div>
+              </div>
+              <div style="margin-top:12px" class="muted">Lessons: ${c.lessons.length}</div>
+            </div>
+          </div>
+        </div>`;
+
+        html += `<div style="margin-top:18px"><h3>Lessons</h3><div class="lessons">`;
+        c.lessons.forEach((l,idx) => {
+          html += `<div class="lesson"><div>${idx+1}. ${l}</div><div class="muted">10m</div></div>`;
+        });
+        html += `</div></div>`;
+
+        if(c.quizzes && c.quizzes.length){
+          html += `<div style="margin-top:16px"><h3>Quizzes</h3>`;
+          c.quizzes.forEach(q=>{
+            html += `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px;margin-top:8px;border-radius:10px;background:#fbfdff">
+              <div><strong>${q.title}</strong><div class="muted" style="font-size:13px">Questions: ${q.questions.length}</div></div>
+              <div><button class="btn" onclick="ui.show('quiz',{courseId:'${c.id}',quizId:'${q.id}'})">Take Quiz</button></div>
+            </div>`;
+          });
+          html += `</div>`;
+        }
+
+        container.innerHTML = html;
+      },
+
+      _courseProgress(courseId){
+        const auth = this.state.auth;
+        if(!auth) return 0;
+        const user = getUsers().find(u=>u.id===auth.id);
+        if(!user) return 0;
+        // naive progress: enrolled courses count => % for demo
+        return user.enrolled.includes(courseId) ? 50 : 0;
+      },
+
+      createCourse(){
+        if(!this.state.auth || (this.state.auth.role!=='instructor' && this.state.auth.role!=='admin')) {
+          document.getElementById('createMsg').innerText = 'Only instructors can create courses. Log in as instructor.';
+          return;
+        }
+        const title = document.getElementById('newTitle').value.trim();
+        const category = document.getElementById('newCategory').value;
+        const description = document.getElementById('newDescription').value.trim();
+        let lessons = [];
+        let quizzes = [];
+        try{
+          lessons = JSON.parse(document.getElementById('newLessons').value || '[]');
+        }catch(e){ document.getElementById('createMsg').innerText='Invalid lessons JSON'; return; }
+        try{
+          quizzes = JSON.parse(document.getElementById('newQuizzes').value || '[]');
+        }catch(e){ document.getElementById('createMsg').innerText='Invalid quizzes JSON'; return; }
+
+        const newCourse = { id: uid(), title, description, instructor:this.state.auth.name, category, lessons, quizzes, createdBy:this.state.auth.id };
+        const arr = getCourses();
+        arr.unshift(newCourse);
+        setCourses(arr);
+        document.getElementById('createMsg').innerText = 'Course created!';
+        this.renderCoursesGrid();
+        setTimeout(()=> this.show('courses'), 900);
+      },
+
+      enroll(courseId){
+        if(!this.state.auth){
+          this.show('auth','login');
+          return;
+        }
+        const users = getUsers();
+        const user = users.find(u=>u.id===this.state.auth.id);
+        if(!user.enrolled.includes(courseId)){
+          user.enrolled.push(courseId);
+          setUsers(users);
+          this.updateSide();
+          alert('Enrolled successfully');
+          this.show('dashboard');
+        } else { alert('Already enrolled'); }
+      },
+
+      renderDashboard(){
+        const container = document.getElementById('myCoursesList');
+        const auth = this.state.auth;
+        if(!auth){ container.innerHTML = '<p>Please sign in to see dashboard</p>'; return; }
+        const user = getUsers().find(u=>u.id===auth.id);
+        if(!user || !user.enrolled.length) { container.innerHTML = '<p>No enrolled courses yet</p>'; return; }
+        let html = '';
+        user.enrolled.forEach(cid=>{
+          const c = getCourses().find(x=>x.id===cid);
+          if(!c) return;
+          html += `<div style="display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:10px;background:#fff;margin-bottom:8px">
+            <div>
+              <div style="font-weight:600">${c.title}</div>
+              <div class="muted" style="font-size:13px">${c.instructor}</div>
+            </div>
+            <div style="text-align:right">
+              <div class="muted">Progress</div>
+              <div style="width:140px;margin-top:8px"><div class="progress-bar"><div class="progress-inner" style="width: ${this._courseProgress(c.id)}%"></div></div></div>
+              <div style="margin-top:8px"><button class="btn" onclick="ui.show('courseDetail','${c.id}')">Open</button></div>
+            </div>
+          </div>`;
+        });
+        container.innerHTML = html;
+      },
+
+      renderQuiz(courseId, quizId){
+        const course = getCourses().find(x=>x.id===courseId);
+        const quiz = (course && course.quizzes.find(q=>q.id===quizId));
+        if(!quiz){ document.getElementById('quizContent').innerHTML = '<p>No quiz found</p>'; return; }
+        let html = `<h3>${quiz.title}</h3><div class="muted">Course: ${course.title}</div><div style="margin-top:12px" id="quizQuestions">`;
+        quiz.questions.forEach((q,idx)=>{
+          html += `<div class="quiz-question" data-idx="${idx}">
+            <div><strong>Q${idx+1}.</strong> ${q.q}</div>
+            <div class="options">`;
+          q.options.forEach((opt,oIndex)=>{
+            html += `<div class="option" data-index="${oIndex}" onclick="ui.selectOption(this, ${idx})">${opt}</div>`;
+          });
+          html += `</div></div>`;
+        });
+        html += `<div style="margin-top:10px"><button class="btn" onclick="ui.submitQuiz('${courseId}','${quizId}')">Submit Quiz</button>
+                 <button class="btn secondary" onclick="ui.show('courseDetail','${courseId}')">Back</button></div></div>`;
+        document.getElementById('quizContent').innerHTML = html;
+        this._quizState = { courseId, quizId, answers: [] };
+      },
+
+      selectOption(el, questionIdx){
+        // mark selected
+        const container = el.closest('.options');
+        container.querySelectorAll('.option').forEach(o=>o.classList.remove('selected'));
+        el.classList.add('selected');
+        const selectedIndex = parseInt(el.getAttribute('data-index'),10);
+        this._quizState.answers[questionIdx] = selectedIndex;
+      },
+
+      submitQuiz(courseId, quizId){
+        const course = getCourses().find(x=>x.id===courseId);
+        const quiz = course.quizzes.find(q=>q.id===quizId);
+        let score = 0;
+        quiz.questions.forEach((q,idx)=>{
+          if(this._quizState.answers[idx] === q.answerIndex) score++;
+        });
+        const percent = Math.round((score/quiz.questions.length)*100);
+        // store result for user
+        if(this.state.auth){
+          const users = getUsers();
+          const user = users.find(u=>u.id===this.state.auth.id);
+          if(!user.quizzes) user.quizzes=[];
+          user.quizzes.push({ courseId, quizId, score:percent, date:(new Date()).toISOString() });
+          setUsers(users);
+        }
+        document.getElementById('quizContent').innerHTML = `<h3>Quiz Result</h3><div class="muted">Score: ${percent}% (${score}/${quiz.questions.length})</div>
+          <div style="margin-top:12px"><button class="btn" onclick="ui.show('courseDetail','${courseId}')">Back to Course</button></div>`;
+      },
+
+      renderCertificate(courseId){
+        const course = getCourses().find(x=>x.id===courseId);
+        if(!this.state.auth){ document.getElementById('certificateContent').innerHTML='<p>Please log in to generate certificate</p>'; return; }
+        const user = getUsers().find(u=>u.id===this.state.auth.id);
+        const enrolled = user.enrolled.includes(courseId);
+        if(!enrolled){ document.getElementById('certificateContent').innerHTML='<p>You must enroll & complete course to get certificate (demo conditions).</p>'; return; }
+        const svg = encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='800' height='600'>
+          <rect width='100%' height='100%' fill='#fff'/>
+          <text x='50%' y='25%' dominant-baseline='middle' text-anchor='middle' font-size='28' fill='#111'>Certificate of Completion</text>
+          <text x='50%' y='45%' dominant-baseline='middle' text-anchor='middle' font-size='22' fill='#666'>This certifies that</text>
+          <text x='50%' y='55%' dominant-baseline='middle' text-anchor='middle' font-size='32' font-weight='bold' fill='#111'>${user.name}</text>
+          <text x='50%' y='65%' dominant-baseline='middle' text-anchor='middle' font-size='20' fill='#444'>has completed the course</text>
+          <text x='50%' y='72%' dominant-baseline='middle' text-anchor='middle' font-size='20' fill='#111'>${course.title}</text>
+          <text x='50%' y='85%' dominant-baseline='middle' text-anchor='middle' font-size='16' fill='#666'>${(new Date()).toLocaleDateString()}</text>
+        </svg>`);
+        const src = 'data:image/svg+xml;utf8,' + svg;
+        document.getElementById('certificateContent').innerHTML = `<h3>Certificate</h3><img src="${src}" alt="certificate" style="width:100%;border-radius:10px"/><div style="margin-top:10px"><a class="btn" href="${src}" download="certificate.svg">Download</a></div>`;
+      },
+
+      renderAuth(mode='login'){
+        const container = document.getElementById('authContent');
+        if(mode==='login'){
+          container.innerHTML = `<h3>Sign in</h3>
+            <div class="muted">Use sample accounts or create new</div>
+            <label>Email</label><input id="liEmail" type="email" />
+            <label>Password</label><input id="liPass" type="password" />
+            <div style="display:flex;gap:8px;margin-top:12px">
+              <button class="btn" onclick="ui.doLogin()">Login</button>
+              <button class="btn secondary" onclick="ui.renderAuth('register')">Register</button>
+            </div>
+            <div class="muted" style="margin-top:8px">Sample: admin@lms.test / admin123</div>`;
+        } else {
+          container.innerHTML = `<h3>Create account</h3>
+            <label>Full name</label><input id="regName" />
+            <label>Email</label><input id="regEmail" />
+            <label>Password</label><input id="regPass" type="password" />
+            <label>Role</label><select id="regRole"><option value="student">Student</option><option value="instructor">Instructor</option></select>
+            <div style="display:flex;gap:8px;margin-top:12px">
+              <button class="btn" onclick="ui.doRegister()">Create</button>
+              <button class="btn secondary" onclick="ui.renderAuth('login')">Back</button>
+            </div>`;
+        }
+      },
+
+      showAuthProfile(){ this.show('auth'); this.renderAuth('profile'); },
+
+      renderAdmin(){
+        // only admin
+        if(!this.state.auth || this.state.auth.role!=='admin'){ document.getElementById('adminContent').innerHTML='<p>Admin access only</p>'; return; }
+        const users = getUsers();
+        const pending = users.filter(u=>u.role==='instructor' && !u.approved);
+        let html = '<h4>Instructor approvals</h4>';
+        if(!pending.length) html += '<div class="muted">No pending approvals</div>';
+        pending.forEach(u=>{
+          html += `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px;border-radius:8px;background:#fff;margin-top:8px">
+            <div><strong>${u.name}</strong><div class="muted">${u.email}</div></div>
+            <div><button class="btn" onclick="ui.approve('${u.id}')">Approve</button></div>
+          </div>`;
+        });
+        html += `<div style="margin-top:12px"><h4>Reports</h4><div class="muted">Total users: ${users.length}</div><div class="muted">Total courses: ${getCourses().length}</div></div>`;
+        document.getElementById('adminContent').innerHTML = html;
+      },
+
+      approve(userId){
+        const users = getUsers();
+        const user = users.find(u=>u.id===userId);
+        if(user){ user.approved = true; setUsers(users); alert('Approved'); this.renderAdmin(); }
+      },
+
+      doRegister(){
+        const name = document.getElementById('regName').value.trim();
+        const email = document.getElementById('regEmail').value.trim();
+        const pass = document.getElementById('regPass').value.trim();
+        const role = document.getElementById('regRole').value;
+        if(!name||!email||!pass) return alert('Fill fields');
+        if(findUserByEmail(email)) return alert('Email taken');
+        const newUser = { id: uid(), name, email, role, password:pass, enrolled:[], approved: role==='instructor' ? false : true };
+        const users = getUsers(); users.push(newUser); setUsers(users);
+        alert('Account created. If instructor, admin approval required.');
+        this.renderAuth('login');
+      },
+
+      doLogin(){
+        const email = document.getElementById('liEmail').value;
+        const pass = document.getElementById('liPass').value;
+        const user = getUsers().find(u=>u.email===email && u.password===pass);
+        if(!user) return alert('Invalid credentials');
+        if(user.role==='instructor' && !user.approved) return alert('Instructor pending approval by admin');
+        this.state.auth = { id:user.id, name:user.name, email:user.email, role:user.role };
+        storage.set('lms_auth', this.state.auth);
+        this.renderUserActions();
+        this.updateSide();
+        this.renderCoursesGrid();
+        alert('Signed in');
+        this.show('home');
+      },
+
+      logout(){ storage.set('lms_auth', null); this.state.auth=null; this.renderUserActions(); this.updateSide(); alert('Logged out'); }
+
+    };
+
+    // wire logout from side panel
+    document.getElementById('logoutBtn').onclick = ()=> { ui.logout(); };
+
+    // search
+    ui.search = ()=> {
+      const q = document.getElementById('searchInput').value.trim().toLowerCase();
+      if(!q) { ui.renderCoursesGrid(); ui.show('courses'); return; }
+      const results = getCourses().filter(c=> c.title.toLowerCase().includes(q) || c.description.toLowerCase().includes(q) || c.instructor.toLowerCase().includes(q));
+      const grid = document.getElementById('coursesGrid');
+      grid.innerHTML = '';
+      if(!results.length) grid.innerHTML = '<div class="muted">No courses found</div>';
+      results.forEach(c=>{
+        const el = document.createElement('div');
+        el.className='course-card';
+        el.innerHTML = `<div><div class="muted">${c.category}</div><div class="title">${c.title}</div><div class="muted">${c.instructor}</div></div>
+          <div style="display:flex;flex-direction:column;gap:8px"><button class="btn" onclick="ui.show('courseDetail','${c.id}');event.stopPropagation()">View</button></div>`;
+        grid.appendChild(el);
+      });
+      ui.show('courses');
+    };
+
+    // admin test helper: create admin button if not exists
+    (function includeAdminIfMissing(){
+      const users = getUsers();
+      if(!users.find(u=>u.role==='admin')) {
+        users.push({ id:uid(), name:'Admin', email:'admin@lms.test', password:'admin123', role:'admin', enrolled:[], approved:true});
+        setUsers(users);
+      }
+    })();
+
+    // simple show helper
+    window.ui = ui;
+
+    // init app
+    ui.init();
+
+    // wire global buttons (top)
+    document.querySelectorAll('.appbar .btn.secondary')[0]?.addEventListener('click', ()=> ui.show('home'));
+    document.querySelectorAll('.appbar .btn')[1]?.addEventListener('click', ()=> ui.show('courses'));
+
+    // Expose some helpers to console for debugging
+    window._LMS = { getUsers, getCourses, storage };
+  </script>
+</body>
+</html>
